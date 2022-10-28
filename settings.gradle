@@ -1,4 +1,6 @@
 rootProject.name = 'OtusHomework'
 include 'hw01-gradle'
 include 'hw04-generics'
+include 'hw06-annotations:homework'
+include 'hw06-annotations:testFramework'
 include 'hw08-gc:homework'

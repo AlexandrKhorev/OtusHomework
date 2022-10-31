@@ -14,43 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 public final class TestRunner {
-    private static Map<String, List<Method>> getAnnotatedMethods(Class<?> clazz) {
-
-        // Метод разбирает класс-тест по аннотациям
-
-        List<Method> beforeMethods = new ArrayList<>();
-        List<Method> afterMethods = new ArrayList<>();
-        List<Method> testMethods = new ArrayList<>();
-
-        for (Method method : clazz.getDeclaredMethods()) {
-
-            method.setAccessible(true);
-
-            if (method.isAnnotationPresent(Before.class)) {
-                addOneMethodInCollection(method, beforeMethods, "BEFORE");
-            } else if (method.isAnnotationPresent(After.class)) {
-                addOneMethodInCollection(method, afterMethods, "AFTER");
-            } else if (method.isAnnotationPresent(Test.class)) {
-                testMethods.add(method);
-            }
-        }
-        return new HashMap<>() {{
-            put("BEFORE", beforeMethods);
-            put("TESTS", testMethods);
-            put("AFTER", afterMethods);
-        }};
-    }
-
-    private static void addOneMethodInCollection(Method method, List<Method> listMethods, String msg) {
-        // Добавляет только один метод в коллекцию,
-        // для повторяющихся выводит предупреждение
-        if (listMethods.isEmpty() || listMethods.size() == 1) {
-            listMethods.add(method);
-        } else {
-            ColorText.printWarning(String.format("There should be only one method with \"%s\" annotation", msg));
-        }
-    }
-
     public static void runTests(Class<?> clazz) {
 
         int all = 0;
@@ -87,6 +50,43 @@ public final class TestRunner {
 
         // Вывод статистики
         ColorText.print(String.format("PASSED: %s, FAILED: %s, ALL: %s%n", passed, failed, all));
+    }
+
+    private static Map<String, List<Method>> getAnnotatedMethods(Class<?> clazz) {
+
+        // Метод разбирает класс-тест по аннотациям
+
+        List<Method> beforeMethods = new ArrayList<>();
+        List<Method> afterMethods = new ArrayList<>();
+        List<Method> testMethods = new ArrayList<>();
+
+        for (Method method : clazz.getDeclaredMethods()) {
+
+            method.setAccessible(true);
+
+            if (method.isAnnotationPresent(Before.class)) {
+                addOneMethodInCollection(method, beforeMethods, "BEFORE");
+            } else if (method.isAnnotationPresent(After.class)) {
+                addOneMethodInCollection(method, afterMethods, "AFTER");
+            } else if (method.isAnnotationPresent(Test.class)) {
+                testMethods.add(method);
+            }
+        }
+        return new HashMap<>() {{
+            put("BEFORE", beforeMethods);
+            put("TESTS", testMethods);
+            put("AFTER", afterMethods);
+        }};
+    }
+
+    private static void addOneMethodInCollection(Method method, List<Method> listMethods, String msg) {
+        // Добавляет только один метод в коллекцию,
+        // для повторяющихся выводит предупреждение
+        if (listMethods.isEmpty() || listMethods.size() == 1) {
+            listMethods.add(method);
+        } else {
+            ColorText.printWarning(String.format("There should be only one method with \"%s\" annotation", msg));
+        }
     }
 
     private static StatusTest runTest(Class<?> clazz, Method beforeMethod, Method method, Method afterMethod) {

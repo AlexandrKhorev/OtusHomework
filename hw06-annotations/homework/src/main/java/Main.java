@@ -1,5 +1,4 @@
 import test.framework.TestRunner;
-import test.framework.utils.assertion.Equals;
 import tests.SomeClassTest;
 import tests.SomeTest1;
 import tests.SomeTest2;

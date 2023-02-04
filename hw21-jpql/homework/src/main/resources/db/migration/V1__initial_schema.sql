@@ -22,6 +22,6 @@ create table phones (
     primary key (id)
 );
 
-alter table clients add constraint FK21gyuophuha3vq8t1os4x2jtl foreign key (address_id) references addresses;
+alter table clients add constraint FK_AddressClient foreign key (address_id) references addresses;
 
-alter table phones add constraint FK2ovgkw92fjf0rn5yksjxa755b foreign key (client_id) references clients;
+alter table phones add constraint FK_ClientPhone foreign key (client_id) references clients;

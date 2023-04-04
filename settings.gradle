@@ -6,3 +6,6 @@ include 'hw06-annotations:testFramework'
 include 'hw08-gc:homework'
 include 'hw10-byteCodes:homework'
 include 'hw21-jpql:homework'
+
+include 'hw38-webflux-chat:homework:client-service'
+include 'hw38-webflux-chat:homework:datastore-service'

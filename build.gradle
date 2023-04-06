@@ -17,17 +17,22 @@ allprojects {
             imports {
                 mavenBom "org.springframework.boot:spring-boot-dependencies:2.7.2"
                 mavenBom "org.testcontainers:testcontainers-bom:1.17.3"
+                mavenBom "com.google.protobuf:protobuf-bom:3.21.1"
             }
             dependency "com.google.guava:guava:${Versions.guava}"
             dependency "org.ow2.asm:asm-commons:${Versions.asm}"
+            dependency "org.glassfish:jakarta.json:${Versions.glassfishJson}"
 
-            dependency("org.projectlombok:lombok:${Versions.lombok}")
+            dependency "org.projectlombok:lombok:${Versions.lombok}"
+            dependency "com.google.code.gson:gson:${Versions.gson}"
         }
     }
 
     configurations.all {
         resolutionStrategy {
             failOnVersionConflict()
+
+            force("com.google.errorprone:error_prone_annotations:2.7.1")
         }
     }
 }

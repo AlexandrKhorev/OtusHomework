@@ -5,6 +5,6 @@ include 'hw06-annotations:homework'
 include 'hw06-annotations:testFramework'
 include 'hw08-gc:homework'
 include 'hw10-byteCodes:homework'
-include 'hw21-jpql:homework'
-
 include 'hw16-io:homework'
+include 'hw21-jpql:homework'
+include 'hw32-concurrentCollections:homework'

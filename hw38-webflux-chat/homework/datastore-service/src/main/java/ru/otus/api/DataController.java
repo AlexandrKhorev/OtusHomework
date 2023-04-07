@@ -18,6 +18,8 @@ public class DataController {
     private final DataStore dataStore;
     private final Scheduler workerPool;
 
+    private static final String SECRET_ROOM = "1408";
+
     public DataController(DataStore dataStore, Scheduler workerPool) {
         this.dataStore = dataStore;
         this.workerPool = workerPool;
@@ -42,6 +44,13 @@ public class DataController {
 
     @GetMapping(value = "/msg/{roomId}", produces = MediaType.APPLICATION_NDJSON_VALUE)
     public Flux<MessageDto> getMessagesByRoomId(@PathVariable("roomId") String roomId) {
+        if (roomId.equals(SECRET_ROOM)){
+            return dataStore.loadAllMessages()
+                    .doOnNext(message -> log.info("roomId: {}, message: {}", message.getRoomId(), message.getMsgText()))
+                    .map(message -> new MessageDto(message.getMsgText()))
+                    .doOnNext(msgDto -> log.info("msgDto:{}", msgDto))
+                    .subscribeOn(workerPool);
+        }
         return Mono.just(roomId)
                 .doOnNext(room -> log.info("getMessagesByRoomId, room:{}", room))
                 .flatMapMany(dataStore::loadMessages)

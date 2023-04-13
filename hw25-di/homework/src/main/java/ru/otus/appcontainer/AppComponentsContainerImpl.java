@@ -21,12 +21,10 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     public <C> C getAppComponent(Class<C> componentClass) {
         // Если добавлено несколько компонентов с одним интерфейсом, при попытке достать такой по интерфейсу или классу, выбрасывается исключение
         var component = appComponents.stream()
-                .filter(c -> Arrays.asList(c.getClass().getInterfaces()).contains(getInterface(componentClass)))
+                .filter(c -> componentClass.isAssignableFrom(c.getClass()))
                 .toList();
         if (component.size() != 1) {
-            throw new AppComponentException(
-                    String.format("The config class contains 0 or more than 1 component with this interface %s", getInterface(componentClass))
-            );
+            throw new AppComponentException(String.format("The config class contains 0 or more than 1 component: %s", componentClass));
         }
         return (C) component.get(0);
     }
@@ -34,7 +32,11 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     @Override
     public <C> C getAppComponent(String componentName) {
         // Достаем компонент по имени
-        return (C) appComponentsByName.get(componentName);
+        var component = appComponentsByName.get(componentName);
+        if (component == null){
+            throw new AppComponentException(String.format("The config class don't contains component with name %s", componentName));
+        }
+        return (C) component;
     }
 
     private void processConfig(Class<?> configClass) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -73,23 +75,10 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         var methodParameters = method.getParameterTypes();
 
         for (var param : methodParameters) {
-            var createdComponent = appComponents.stream()
-                    .filter(c -> Arrays.asList(c.getClass().getInterfaces()).contains(param))
-                    .toList();
-            if (createdComponent.size() == 1) {
-                argsForCreateComponents.add(createdComponent.get(0));
-            } else {
-                throw new AppComponentException("Component not found or amount components more then 1");
-            }
+            // Если компонент не создан, выбросится исключение.
+            argsForCreateComponents.add(getAppComponent(param));
         }
         return argsForCreateComponents;
-    }
-
-    private <C> Class<C> getInterface(Class<C> clazz) {
-        if (clazz.isInterface()) {
-            return clazz;
-        }
-        return (Class<C>) Arrays.asList(clazz.getInterfaces()).get(0);
     }
 
     private void checkConfigClass(Class<?> configClass) {

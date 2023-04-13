@@ -25,6 +25,11 @@ allprojects {
 
             dependency "org.projectlombok:lombok:${Versions.lombok}"
             dependency "com.google.code.gson:gson:${Versions.gson}"
+
+            dependency "org.webjars:sockjs-client:${Versions.sockjs}"
+            dependency "org.webjars:stomp-websocket:${Versions.stomp}"
+            dependency "org.webjars:bootstrap:${Versions.bootstrap}"
+            dependency "io.r2dbc:r2dbc-postgresql:${Versions.r2dbcPostgresql}"
         }
     }
 

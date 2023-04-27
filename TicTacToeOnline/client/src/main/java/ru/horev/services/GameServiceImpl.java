@@ -7,6 +7,8 @@ import ru.horev.models.Game;
 import ru.horev.models.Player;
 import ru.horev.storage.GameStorage;
 
+import java.util.List;
+
 @Service
 public class GameServiceImpl implements GameService {
 
@@ -31,7 +33,14 @@ public class GameServiceImpl implements GameService {
     public Game updateBoard(String gameId, Cell cell) {
         Game game = gameStorage.getGameById(gameId);
         game.updateBoard(cell);
-        game.checkWinner();
+        if (game.checkWinner()){
+            gameStorage.saveGameInArchive(game);
+        }
         return game;
+    }
+
+    @Override
+    public List<Game> getListGames() {
+        return gameStorage.getListGames();
     }
 }

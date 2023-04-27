@@ -53,7 +53,9 @@ public class TicTacToe {
             if (value != board.get(ids[2][0]).get(ids[2][1])){
                 continue;
             }
-            return value;
+            if (value != TicTacToeValue.NULL){
+                return value;
+            }
         }
         return null;
     }

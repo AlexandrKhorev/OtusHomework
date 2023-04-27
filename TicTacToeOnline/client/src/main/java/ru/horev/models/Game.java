@@ -11,14 +11,25 @@ public class Game {
     private final String gameId;
     private final Player player1;
     private Player player2;
-    private Player winner;
+    private TicTacToeValue winner;
     private final TicTacToe gameCore;
-//    private List<Player> spectators = new ArrayList<>();
+
 
     public Game(Player player1) {
-        this.gameId = UUID.randomUUID().toString();
+        this.gameId = UUID.randomUUID().toString().toUpperCase();
         this.player1 = player1;
         this.gameCore = new TicTacToe(3);
+    }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "gameId='" + gameId + '\'' +
+                ", player1=" + player1 +
+                ", player2=" + player2 +
+                ", winner=" + winner +
+                ", gameCore=" + gameCore +
+                '}';
     }
 
     public void updateBoard(Cell cell) {
@@ -26,15 +37,13 @@ public class Game {
         gameCore.updateBoard(cell.xCoordinate(), cell.yCoordinate(), cell.playerType());
     }
 
-    public void checkWinner(){
+    public boolean checkWinner(){
         TicTacToeValue winner = gameCore.checkWinner();
         if (winner != null){
-            if (winner == TicTacToeValue.CROSS){
-                this.winner = player1;
-            } else if (winner == TicTacToeValue.ZERO){
-                this.winner = player2;
-            }
+            this.winner = winner;
+            return true;
         }
+        return false;
     }
 
     private void checkPlayer2() {
@@ -55,7 +64,7 @@ public class Game {
         return player2;
     }
 
-    public Player getWinner() {
+    public TicTacToeValue getWinner() {
         return winner;
     }
 
@@ -67,7 +76,7 @@ public class Game {
         this.player2 = player2;
     }
 
-    public void setWinner(Player winner) {
+    public void setWinner(TicTacToeValue winner) {
         this.winner = winner;
     }
 }

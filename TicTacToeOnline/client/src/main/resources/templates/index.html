@@ -6,48 +6,76 @@
           name="viewport">
     <meta content="ie=edge" http-equiv="X-UA-Compatible">
     <title>Document</title>
-    <!--    <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"-->
-    <!--          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet">-->
     <link href="../static/css/style.css" rel="stylesheet">
-<!--    <link crossorigin="anonymous" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"-->
-<!--          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" rel="stylesheet">-->
-
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.js"></script>-->
-<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
-    <script src="/js/client.js"></script>
-    <script src="/js/game.js"></script>
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
-<div class="text-center" id="box">
-    <header>
-        <h1>Tic-Tac-Toe</h1>
-    </header>
-    <input id="login" placeholder="Place a login here">
-    <button id="createGame" class="btn button-12" onclick="createGame()">Create a new game</button>
+<h1>TIC-TAC-TOE</h1>
 
-    <input id="gameId" placeholder="Paste game id">
-    <button id="connectById" class="btn button-12" onclick="connectToGameById()">Connect by gameId</button>
+<button id="connect" class="button" onclick="connectSocket()">CONNECT</button>
 
-    <!--    <button>Connect by game id</button>-->
-    <!--    <div id="message"></div>-->
-    <ul id="gameBoard">
-        <li class="cell" id="0_0" onclick="clickCell(this)"></li>
-        <li class="cell" id="0_1" onclick="clickCell(this)"></li>
-        <li class="cell" id="0_2" onclick="clickCell(this)"></li>
-        <li class="cell" id="1_0" onclick="clickCell(this)"></li>
-        <li class="cell" id="1_1" onclick="clickCell(this)"></li>
-        <li class="cell" id="1_2" onclick="clickCell(this)"></li>
-        <li class="cell" id="2_0" onclick="clickCell(this)"></li>
-        <li class="cell" id="2_1" onclick="clickCell(this)"></li>
-        <li class="cell" id="2_2" onclick="clickCell(this)"></li>
-    </ul>
-    <div class="clearfix"></div>
-    <footer>
-        <span>You are playing with <span id="oponentLogin"></span></span>
-    </footer>
+
+<div class="buttonGroup">
+    <div class="inputElements">
+        <input id="login" class="input" placeholder="Place a login here">
+        <button id="createGame" class="button" onclick="createGame()">Create a new game</button>
+    </div>
+    <div class="inputElements">
+        <input id="gameId" class="input" placeholder="Paste game id">
+        <button id="connectById" class="button" onclick="connectToGameById()">Connect by gameId</button>
+    </div>
 </div>
+
+<h1 class="errorMessage"></h1>
+
+<div class="gameList">
+    <table>
+        <thead>
+        <tr>
+            <th>GameId</th>
+            <th>Player1</th>
+            <th>Player2</th>
+            <th>Board</th>
+        </tr>
+        </thead>
+        <tbody id="gameFromList" class="gameFromList"></tbody>
+    </table>
+</div>
+
+<h1 class="textGameId"></h1>
+
+<div class="gameBoard" id="gameBoardId">
+    <div class="box">
+        <div class="cell" id="0_0" onclick="clickCell(this)"></div>
+        <div class="cell" id="0_1" onclick="clickCell(this)"></div>
+        <div class="cell" id="0_2" onclick="clickCell(this)"></div>
+        <div class="cell" id="1_0" onclick="clickCell(this)"></div>
+        <div class="cell" id="1_1" onclick="clickCell(this)"></div>
+        <div class="cell" id="1_2" onclick="clickCell(this)"></div>
+        <div class="cell" id="2_0" onclick="clickCell(this)"></div>
+        <div class="cell" id="2_1" onclick="clickCell(this)"></div>
+        <div class="cell" id="2_2" onclick="clickCell(this)"></div>
+    </div>
+</div>
+
+<div class="endGameMessage"></div>
+
+<div class="buttonGroup">
+    <div class="inputElements">
+        <button id="restart" class="button" onclick="restart()">Restart</button>
+    </div>
+    <div class="inputElements">
+        <button id="newGame" class="button" onclick="createNewGame()">Create new game</button>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+<script src="/js/connect.js"></script>
+<script src="/js/gameplay.js"></script>
+<script src="/js/elements.js"></script>
+
 </body>
 </html>

@@ -15,4 +15,3 @@ include 'hw38-webflux-chat:homework:datastore-service'
 
 include 'TicTacToeOnline:client'
 include 'TicTacToeOnline:gamecore'
-include 'TicTacToeOnline:client'

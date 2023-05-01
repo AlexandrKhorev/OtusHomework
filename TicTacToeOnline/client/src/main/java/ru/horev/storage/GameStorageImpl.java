@@ -1,19 +1,20 @@
 package ru.horev.storage;
 
 import org.springframework.stereotype.Component;
+import ru.horev.datastore.models.Game;
+import ru.horev.datastore.repositories.GameRepository;
 import ru.horev.exceptions.GameException;
-import ru.horev.models.Game;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class GameStorageImpl implements GameStorage {
-    private final Map<String, Game> games = new HashMap<>();
+    private final Map<UUID, Game> games = new HashMap<>();
 
-    public GameStorageImpl() {
+    private final GameRepository gameRepository;
+
+    public GameStorageImpl(GameRepository gameRepository) {
+        this.gameRepository = gameRepository;
     }
 
     @Override
@@ -22,12 +23,12 @@ public class GameStorageImpl implements GameStorage {
     }
 
     @Override
-    public Game getGameById(String id) {
-        Game game = games.get(id.toUpperCase());
+    public Game getGameById(UUID gameId) {
+        Game game = games.get(gameId);
         if (game == null) {
-            throw new GameException("Game with gameId: " + id + " not found");
+            throw new GameException("Game with gameId: " + gameId + " not found");
         }
-        return games.get(id);
+        return games.get(gameId);
     }
 
     @Override
@@ -36,8 +37,8 @@ public class GameStorageImpl implements GameStorage {
     }
 
     @Override
-    public void saveGameInArchive(Game game) {
+    public void moveGameInArchive(Game game) {
         games.remove(game.getGameId());
-//        gamesArchive.put(game.getGameId(), game);
+        gameRepository.save(game);
     }
 }

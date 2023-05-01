@@ -1,15 +1,16 @@
 package ru.horev.storage;
 
-import ru.horev.models.Game;
+import ru.horev.datastore.models.Game;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface GameStorage {
     void addGames(Game game);
 
-    Game getGameById(String id);
+    Game getGameById(UUID gameId);
 
     List<Game> getListGames();
 
-    void saveGameInArchive(Game game);
+    void moveGameInArchive(Game game);
 }

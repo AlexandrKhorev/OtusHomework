@@ -2,6 +2,8 @@ package ru.horev;
 
 import ru.horev.exceptions.InvalidValueException;
 
+import java.util.stream.Stream;
+
 public enum TicTacToeValue {
     CROSS("X"),
     ZERO("O"),
@@ -13,12 +15,14 @@ public enum TicTacToeValue {
         this.value = value;
     }
 
-    public static TicTacToeValue getByValue(String value){
-        for (TicTacToeValue element: TicTacToeValue.values()){
-            if (element.value.equals(value)){
-                return element;
-            }
-        }
-        throw new InvalidValueException("TicTacToe with value " + value + " not found");
+    public String getValue() {
+        return value;
+    }
+
+    public static TicTacToeValue getByValue(String value) {
+        return Stream.of(TicTacToeValue.values())
+                .filter(v -> v.getValue().equals(value))
+                .findFirst()
+                .orElseThrow(() -> new InvalidValueException("TicTacToe with value " + value + " not found"));
     }
 }

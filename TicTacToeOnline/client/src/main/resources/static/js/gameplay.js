@@ -20,6 +20,7 @@ function checkWinner(winner) {
 }
 
 function fillBoard(board) {
+    console.log("BOARD " + board);
     board.forEach((row, idx_row) => {
         row.forEach((col, idx_col) => {
             $(`#${idx_row}_${idx_col}`).text(enumBoardValues[col]);
@@ -36,7 +37,7 @@ function resetBoard() {
 
 function clickCell(cell) {
     let [yCoordinate, xCoordinate] = cell.id.split("_");
-    stompClientGameplay.send(`/app/gameplay.${gameId}`, {}, JSON.stringify({
+    stompClientGameplay.send(appChannelNames.gameplay(gameId), {}, JSON.stringify({
         "xCoordinate": xCoordinate, "yCoordinate": yCoordinate, "playerType": playerValue
     }));
 }

@@ -1,13 +1,22 @@
 const url = 'http://localhost:8080';
 
-const nameSocketRegistryMain = "/main";
-const nameSocketRegistryGameplay = "/gameplay";
+const socketRegistryNames = {
+    main: "/main",
+    gameplay: "/gameplay"
+}
 
+const topicNames = {
+    gameList: `/topic/gameList`,
+    updateSmallGame: '/topic/updateSmallGame',
+    createOrJoinGame: login =>  `/topic/joinGame.${login}`,
+    gameProgress: gameId => `/topic/game-progress.${gameId}`
+}
 
-const nameTopicGameList = `/topic/gameList`;
-const nameTopicUpdateSmallGame = '/topic/updateSmallGame';
-
-// const nameTopicCreateOrJoinGame = '/topic/joinGame';
+const appChannelNames = {
+    createGame: '/app/createGame',
+    connectToGame :gameId => `/app/connectToGame.${gameId}`,
+    gameplay : gameId => `/app/gameplay.${gameId}`
+}
 
 let stompClientMain = null;
 let stompClientGameplay = null;
@@ -19,21 +28,16 @@ let playerValue;
 
 
 function connectSocket() {
-
-    stompClientMain = Stomp.over(new SockJS(nameSocketRegistryMain));
+    stompClientMain = Stomp.over(new SockJS(socketRegistryNames.main));
 
     stompClientMain.connect({}, frame => {
         console.log(`connected to main socket: ${frame}`);
 
         // Получение игры для всех при ее созданиии
-        stompClientMain.subscribe(nameTopicGameList, response => showGame(JSON.parse(response.body)));
+        stompClientMain.subscribe(topicNames.gameList, response => showGame(JSON.parse(response.body)));
 
         // Обновление маленького поля в списке игр
-        stompClientMain.subscribe(nameTopicUpdateSmallGame, response => updateBoardFromList(JSON.parse(response.body)));
-
-        // // Создание игры или присоединение к другой игре
-        // stompClientMain.subscribe(nameTopicCreateOrJoinGame, response => createOrJoinGame(JSON.parse(response.body)));
-
+        stompClientMain.subscribe(topicNames.updateSmallGame, response => updateBoardFromList(JSON.parse(response.body)));
     })
 }
 
@@ -77,10 +81,10 @@ function connectToSocketGameplay(gameId) {
     // Создаем новый сокет и подписываемся на сообщения с геймплеем.
     console.log("connecting to the socket gameplay");
 
-    stompClientGameplay = Stomp.over(new SockJS(nameSocketRegistryGameplay));
+    stompClientGameplay = Stomp.over(new SockJS(socketRegistryNames.gameplay));
 
     stompClientGameplay.connect({}, frame => {
-        stompClientGameplay.subscribe(`/topic/game-progress.${gameId}`, response => {
+        stompClientGameplay.subscribe(topicNames.gameProgress(gameId), response => {
             let data = JSON.parse(response.body);
             console.log(data);
             gameplay(data);
@@ -89,6 +93,7 @@ function connectToSocketGameplay(gameId) {
 }
 
 function reconnectToGameplaySocket(data) {
+    // Отключаемся от основного сокета и подключаемся к сокету, который слушает канал с геймплеем
     disconnectSocketMain();
     connectToSocketGameplay(data.gameId)
     createOrJoinGame(data);
@@ -103,11 +108,11 @@ function createGame() {
         return;
     }
 
-    stompClientMain.subscribe(`/topic/joinGame.${login}`, response => {
+    stompClientMain.subscribe(topicNames.createOrJoinGame(login), response => {
         reconnectToGameplaySocket(JSON.parse(response.body));
     });
 
-    stompClientMain.send('/app/createGame', {}, JSON.stringify({"login": login}));
+    stompClientMain.send(appChannelNames.createGame, {}, JSON.stringify({"login": login}));
 }
 
 function connectToGameById() {
@@ -124,11 +129,11 @@ function connectToGameById() {
         return;
     }
 
-    stompClientMain.subscribe(`/topic/joinGame.${login}`, response => {
+    stompClientMain.subscribe(topicNames.createOrJoinGame(login), response => {
         reconnectToGameplaySocket(JSON.parse(response.body));
     });
 
-    stompClientMain.send(`/app/connectToGame.${inputGameId}`, {}, JSON.stringify({"login": login}));
+    stompClientMain.send(appChannelNames.connectToGame(inputGameId), {}, JSON.stringify({"login": login}));
 }
 
 function setPlayerType(numberPlayer) {

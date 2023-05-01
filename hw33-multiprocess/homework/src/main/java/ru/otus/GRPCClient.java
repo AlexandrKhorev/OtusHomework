@@ -11,7 +11,7 @@ public class GRPCClient {
     private static final int SERVER_PORT = 8190;
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
 
         ManagedChannel channel = ManagedChannelBuilder.forAddress(SERVER_HOST, SERVER_PORT)
                 .usePlaintext()

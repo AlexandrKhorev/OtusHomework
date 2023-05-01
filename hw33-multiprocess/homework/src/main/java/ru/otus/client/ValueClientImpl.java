@@ -51,12 +51,12 @@ public class ValueClientImpl implements ValueClient {
     private void nextValueFromServer() {
 
         var latch = new CountDownLatch(1);
-        StreamObserver<ValueResultMessage> observer = new StreamObserver<ValueResultMessage>() {
+        StreamObserver<ValueResultMessage> observer = new StreamObserver<>() {
             @Override
             public void onNext(ValueResultMessage value) {
                 int valueFromServer = value.getResult();
-                logger.info("Get result from server {}", value);
-                lastValueFromServer = valueFromServer;
+                logger.info("Get result from server {}", valueFromServer);
+                setLastValue(valueFromServer);
             }
 
             @Override
@@ -80,7 +80,11 @@ public class ValueClientImpl implements ValueClient {
         stub.getValue(message, observer);
     }
 
-    private void nextCurrentValue() {
+    private synchronized void setLastValue(int value){
+        this.lastValueFromServer = value;
+    }
+
+    private synchronized void nextCurrentValue() {
         currentValue = currentValue + lastValueFromServer + 1;
         lastValueFromServer = 0;
     }

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ru.otus.generated;
+
+option java_multiple_files = true;
+
+message ValueMessage {
+  int32 firstValue = 1;
+  int32 lastValue = 2;
+}
+
+message ValueResultMessage {
+  int32 result = 1;
+}
+
+service RemoteValueService {
+  rpc getValue(ValueMessage) returns (stream ValueResultMessage);
+}

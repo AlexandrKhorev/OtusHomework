@@ -9,4 +9,7 @@ public interface Versions {
     String r2dbcPostgresql = "0.8.13.RELEASE";
     String gson = "2.10.1";
     String reflections = "0.10.2";
+    String grpc = "1.44.1";
+    String tomcatAnnotationsApi = "6.0.53";
+    String errorProneAnnotations = "2.11.0";
 }

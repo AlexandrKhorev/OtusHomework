@@ -13,3 +13,6 @@ include 'hw31-executors:homework'
 include 'hw32-concurrentCollections:homework'
 include 'hw38-webflux-chat:homework:client-service'
 include 'hw38-webflux-chat:homework:datastore-service'
+
+include 'TicTacToeOnline:client'
+include 'TicTacToeOnline:gamecore'

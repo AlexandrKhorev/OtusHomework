@@ -7,8 +7,8 @@ import java.util.List;
 
 public class TicTacToe {
     private final int size;  // Размер игрового поля
-    private final List<List<TicTacToeValue>> board = new ArrayList<>();  // Двумерный список значений игрового поля
     private String lastPlayerType;  //  Тип игрока, ходившего последним
+    private final List<List<TicTacToeValue>> board = new ArrayList<>();  // Двумерный список значений игрового поля
 
     private static final int[][][] winnerIds = {
             // По горизонтали
@@ -38,22 +38,25 @@ public class TicTacToe {
         if (playerType.equals(lastPlayerType)) {
             throw new TicTacToeException("Player " + playerType + " moves a second time");
         }
+        // Проверяем пустая ли ячейка
+        if (board.get(yCoordinate).get(xCoordinate) != TicTacToeValue.NULL) {
+            throw new TicTacToeException("The cell already has a value");
+        }
         // Обновляем значение, кто ходил последним и обновляем значение игрового поля
         lastPlayerType = playerType;
         board.get(yCoordinate).set(xCoordinate, TicTacToeValue.getByValue(playerType));
-
     }
 
-    public TicTacToeValue checkWinner(){
-        for (int[][] ids :winnerIds){
+    public TicTacToeValue checkWinner() {
+        for (int[][] ids : winnerIds) {
             TicTacToeValue value = board.get(ids[0][0]).get(ids[0][1]);
             if (value != board.get(ids[1][0]).get(ids[1][1])) {
                 continue;
             }
-            if (value != board.get(ids[2][0]).get(ids[2][1])){
+            if (value != board.get(ids[2][0]).get(ids[2][1])) {
                 continue;
             }
-            if (value != TicTacToeValue.NULL){
+            if (value != TicTacToeValue.NULL) {
                 return value;
             }
         }

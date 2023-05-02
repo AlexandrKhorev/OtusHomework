@@ -14,16 +14,15 @@ import ru.horev.models.Cell;
 import ru.horev.models.GameDto;
 import ru.horev.services.GameService;
 
+import java.util.List;
 import java.util.UUID;
+
+import static ru.horev.controllers.utils.Topics.*;
 
 @Controller
 public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
-    private static final String GAME_PROGRESS_TEMPLATE = "/topic/game-progress.";
-    private static final String TOPIC_JOIN_GAME = "/topic/joinGame.";
-    private static final String TOPIC_GAME_LIST = "/topic/gameList";
-    private static final String TOPIC_UPDATE_GAME_LIST = "/topic/updateSmallGame";
 
     private final GameService gameService;
     private final SimpMessagingTemplate template;
@@ -31,6 +30,17 @@ public class GameController {
     public GameController(GameService gameService, SimpMessagingTemplate simpMessagingTemplate) {
         this.gameService = gameService;
         this.template = simpMessagingTemplate;
+    }
+
+    @MessageMapping("/getGameList")
+    public void getGameList() {
+        logger.info("getGameList");
+        List<GameDto> gameList = gameService.getListGames()
+                .stream()
+                .map(this::convertGameToDto)
+                .toList();
+
+        template.convertAndSend(TOPIC_GAME_LIST, gameList);
     }
 
     @MessageMapping("/createGame")
@@ -41,7 +51,7 @@ public class GameController {
         GameDto gameDto = convertGameToDto(gameService.createGame(player1));
         logger.info("started game for player1 - {}, gameId - {}", player1.getLogin(), gameDto.gameId());
 
-        template.convertAndSend(TOPIC_GAME_LIST, gameDto);
+        template.convertAndSend(TOPIC_ADD_GAME_IN_GAME_LIST, gameDto);
         template.convertAndSend(String.format("%s%s", TOPIC_JOIN_GAME, player1.getLogin()), gameDto);
     }
 
@@ -51,7 +61,7 @@ public class GameController {
         GameDto gameDto = convertGameToDto(gameService.addPlayerToGame(gameId, player2));
         logger.info("connected to game: {}, player2: {}", gameDto.gameId(), player2.getLogin());
 
-        template.convertAndSend(TOPIC_GAME_LIST, gameDto);
+        template.convertAndSend(TOPIC_ADD_GAME_IN_GAME_LIST, gameDto);
         template.convertAndSend(String.format("%s%s", TOPIC_JOIN_GAME, player2.getLogin()), gameDto);
     }
 

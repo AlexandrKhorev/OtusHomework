@@ -92,6 +92,7 @@ html {
 }
 
 .gameList {
+    visibility: hidden;
     display: flex;
     justify-content: center;
     margin-top: 24px;
@@ -129,21 +130,3 @@ table {
 .textGameId {
     visibility: hidden;
 }
-
-/*.smallGameBoard {*/
-/*    width: 70px;*/
-/*    height: 70px;*/
-/*}*/
-
-/*.smallGameBoard li {*/
-/*    height: 20px;*/
-/*    width: 20px;*/
-/*    margin: 1px;*/
-/*    border-radius: 2px;*/
-/*    float: left;*/
-/*    font-size: 13px;*/
-/*    background: #731616;*/
-/*    color: #ccc;*/
-/*    list-style: none;*/
-/*    text-align: center;*/
-/*}*/

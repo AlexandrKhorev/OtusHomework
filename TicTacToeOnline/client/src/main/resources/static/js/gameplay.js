@@ -1,11 +1,13 @@
 const enumBoardValues = {"CROSS": "X", "ZERO": "O", "NULL": ""}
 const winText = "You are win"
-const loseText ="You are lose"
+const loseText = "You are lose"
+
 
 function gameplay(data) {
     fillBoard(data.board);
     checkWinner(data.winner);
 }
+
 
 function checkWinner(winner) {
     if (winner) {
@@ -14,10 +16,12 @@ function checkWinner(winner) {
 
         winner === playerType ? endGame.textContent = winText : endGame.textContent = loseText;
         endGameElement.appendChild(endGame);
-
         visibleBoard(false);
+        return true;
     }
+    return false;
 }
+
 
 function fillBoard(board) {
     console.log("BOARD " + board);
@@ -47,10 +51,11 @@ function showGame(game) {
     let {gameId, player1, player2, board} = game;
     let loginPlayer1 = player1 && ("login" in player1) ? player1["login"] : "-------"
     let loginPlayer2 = player2 && ("login" in player2) ? player2["login"] : "-------"
-    drawSmallGame(gameId, loginPlayer1, loginPlayer2, board)
+    appendGameInTable(gameId, loginPlayer1, loginPlayer2, board)
 }
+
 
 function updateBoardFromList(data) {
     let {board, gameId} = data;
-    document.getElementById(gameId).replaceWith(createSmallBoard(gameId, board));
+    document.getElementById(gameId).cells[3].replaceChildren(createSmallBoard(gameId, board));
 }

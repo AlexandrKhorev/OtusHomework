@@ -1,26 +1,5 @@
-const url = 'http://localhost:8080';
-
-const socketRegistryNames = {
-    main: "/main",
-    gameplay: "/gameplay"
-}
-
-const topicNames = {
-    gameList: `/topic/gameList`,
-    updateSmallGame: '/topic/updateSmallGame',
-    createOrJoinGame: login =>  `/topic/joinGame.${login}`,
-    gameProgress: gameId => `/topic/game-progress.${gameId}`
-}
-
-const appChannelNames = {
-    createGame: '/app/createGame',
-    connectToGame :gameId => `/app/connectToGame.${gameId}`,
-    gameplay : gameId => `/app/gameplay.${gameId}`
-}
-
 let stompClientMain = null;
 let stompClientGameplay = null;
-
 
 let gameId;
 let playerType;
@@ -33,21 +12,29 @@ function connectSocket() {
     stompClientMain.connect({}, frame => {
         console.log(`connected to main socket: ${frame}`);
 
+        // Получение списка созданных игр при создании соединения с сокетом
+        stompClientMain.subscribe(topicNames.getGameList, response => showGameList(JSON.parse(response.body)));
+
         // Получение игры для всех при ее созданиии
-        stompClientMain.subscribe(topicNames.gameList, response => showGame(JSON.parse(response.body)));
+        stompClientMain.subscribe(topicNames.addGameInGameList, response => showGame(JSON.parse(response.body)));
 
         // Обновление маленького поля в списке игр
         stompClientMain.subscribe(topicNames.updateSmallGame, response => updateBoardFromList(JSON.parse(response.body)));
+
+        // Отправляем запрос на получение списка игр
+        stompClientMain.send(appChannelNames.getGameList);
     })
+
 }
 
+
 function disconnectSocketMain() {
-    console.log("DISCONNECT MAIN SOCKET")
+    console.log("disconnect main socket");
     stompClientMain.disconnect();
 }
 
 
-function createOrJoinGame(data, numberPlayer) {
+function createOrJoinGame(data) {
     console.log("CREATE GAME " + JSON.stringify(data));
     gameId = data.gameId;
 
@@ -55,25 +42,9 @@ function createOrJoinGame(data, numberPlayer) {
 
     data.player2 ? setPlayerType("2") : setPlayerType("1");
     console.log(playerType)
-    // p1
-    // console.log(JSON.stringify(data));
-    // gameId = data.gameId;
-
-    // setPlayerType("1");
-    // connectToSocketGameplay(gameId);
-    // alert("Your created a game. Game id is: " + data.gameId);
     visibleBoard(true);
     visibleError(null, false);
     visibleGameId(gameId, true);
-    // p2
-    //         console.log(JSON.stringify(data));
-    //         gameId = data.gameId;
-    //         setPlayerType("2");
-    //         connectToSocket(gameId);
-    //         alert("Congrats you're playing with: " + data.player1.login);
-    //         visibleBoard(true);
-    //         visibleError(null, false);
-    //         visibleGameId(gameId, true);
 }
 
 
@@ -92,6 +63,7 @@ function connectToSocketGameplay(gameId) {
     })
 }
 
+
 function reconnectToGameplaySocket(data) {
     // Отключаемся от основного сокета и подключаемся к сокету, который слушает канал с геймплеем
     disconnectSocketMain();
@@ -100,10 +72,18 @@ function reconnectToGameplaySocket(data) {
 }
 
 
+function parseElement(id){
+    let element = document.getElementById(id).value;
+    if (element === null || element === ''){
+        return null
+    }
+    return element
+}
+
 function createGame() {
     // Проверяем введенный логин, если нет - отображается ошибка. Отправляем запрос на создание игры
-    let login = document.getElementById("login").value;
-    if (login == null || login === '') {
+    let login = parseElement("login");
+    if (!login) {
         visibleError("login", true);
         return;
     }
@@ -113,28 +93,37 @@ function createGame() {
     });
 
     stompClientMain.send(appChannelNames.createGame, {}, JSON.stringify({"login": login}));
+    // stompClientMain.send(appChannelNames.login, {}, JSON.stringify({"login": login}));
 }
 
-function connectToGameById() {
+
+function connectToGameById(){
+    _connectToGameById(
+        parseElement("login"),
+        parseElement("gameId")
+    );
+}
+
+function _connectToGameById(inputLogin, inputGameId) {
+
     // Проверяем login и gameId и отправляем запрос на подключение к игре
-    let login = document.getElementById("login").value;
-    if (login == null || login === '') {
+    if (!inputLogin) {
         visibleError("login", true);
         return;
     }
 
-    let inputGameId = document.getElementById("gameId").value;
-    if (inputGameId == null || inputGameId === '') {
+    if (!inputGameId) {
         visibleError("gameId", true);
         return;
     }
 
-    stompClientMain.subscribe(topicNames.createOrJoinGame(login), response => {
+    stompClientMain.subscribe(topicNames.createOrJoinGame(inputLogin), response => {
         reconnectToGameplaySocket(JSON.parse(response.body));
     });
 
-    stompClientMain.send(appChannelNames.connectToGame(inputGameId), {}, JSON.stringify({"login": login}));
+    stompClientMain.send(appChannelNames.connectToGame(inputGameId), {}, JSON.stringify({"login": inputLogin}));
 }
+
 
 function setPlayerType(numberPlayer) {
     if (numberPlayer === "1") {
@@ -146,9 +135,11 @@ function setPlayerType(numberPlayer) {
     }
 }
 
+
 function createNewGame() {
 
 }
+
 
 function restart() {
 
